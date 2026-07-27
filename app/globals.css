@@ -52,7 +52,7 @@ button { font:inherit; }
 .eyebrow { margin:0 0 24px; text-transform:uppercase; letter-spacing:.06em; font-size:15px; line-height:1.2; font-weight:800; color:#68737c; }
 h1,h2,h3,p { text-wrap:balance; }
 h1 { margin:0; font-size:clamp(50px,6vw,84px); line-height:.95; letter-spacing:-.045em; }
-.hero-product-card h1, .hero-product-card h2 { font-size:clamp(58px,7.4vw,118px); line-height:.9; max-width:760px; }
+.hero-product-card h1, .hero-product-card h2 { font-size:clamp(58px,7.4vw,118px); line-height:1.02; max-width:760px; }
 .intro { font-size:20px; line-height:1.55; max-width:570px; margin:34px 0 25px; }
 .hero-product-card .intro { max-width:620px; font-size:clamp(18px,1.55vw,24px); line-height:1.45; }
 .veg { border:1px solid #18a657; width:23px; height:23px; display:grid; place-items:center; margin-bottom:36px; }
