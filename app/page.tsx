@@ -227,12 +227,23 @@ export default function Home() {
       </section>
 
       <section className="company" id="company">
+        <div className="company-ribbons" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <div className="company-heading" data-reveal>
           <p className="eyebrow reveal-child">Red Bull Company</p>
           <h2 className="reveal-child">Giving wiiings to<br />people &amp; ideas<br />since 1987</h2>
           <a className="text-link reveal-child" href="#world">Company <span>↗</span></a>
+          <div className="company-stats reveal-child" aria-label="Red Bull company highlights">
+            <span><b>1987</b>Born in Austria</span>
+            <span><b>170+</b>Countries</span>
+            <span><b>1</b>Mission</span>
+          </div>
         </div>
-        <blockquote data-reveal>
+        <blockquote className="quote-card" data-reveal>
+          <img className="quote-logo" src="/redbull-logo.svg" alt="" aria-hidden="true" />
           <span className="quote-mark">“</span>
           <p>During a match I have a Red Bull shortly before going out to bat or field.</p>
           <footer>
