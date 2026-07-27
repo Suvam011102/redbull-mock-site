@@ -18,6 +18,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [heroTilt, setHeroTilt] = useState({ x: 0, y: 0 });
   const [heroStep, setHeroStep] = useState(0);
+  const [heroProgress, setHeroProgress] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
   const product = products[edition];
 
@@ -59,6 +60,7 @@ export default function Home() {
       const rect = hero.getBoundingClientRect();
       const travel = Math.max(1, rect.height - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -rect.top / travel));
+      setHeroProgress(progress);
       setHeroStep(progress < 0.34 ? 0 : progress < 0.68 ? 1 : 2);
     };
 
@@ -114,7 +116,7 @@ export default function Home() {
         data-hero-step={heroStep}
         onMouseMove={handleHeroMove}
         onMouseLeave={() => setHeroTilt({ x: 0, y: 0 })}
-        style={{ "--tilt-x": heroTilt.x, "--tilt-y": heroTilt.y } as React.CSSProperties}
+        style={{ "--tilt-x": heroTilt.x, "--tilt-y": heroTilt.y, "--hero-progress": heroProgress } as React.CSSProperties}
       >
         <div className="hero-stage">
           <article className="hero-product-card card-pink">
