@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const products = [
   { name: "The Pink Edition", can: "/pink.webp", tone: "#eb3a7b", tag: "Wiiings for every taste" },
@@ -17,6 +17,8 @@ export default function Home() {
   const [edition, setEdition] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [heroTilt, setHeroTilt] = useState({ x: 0, y: 0 });
+  const [heroStep, setHeroStep] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
   const product = products[edition];
 
   useEffect(() => {
@@ -42,6 +44,37 @@ export default function Home() {
 
     revealItems.forEach((item) => observer.observe(item));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    let frame = 0;
+    const updateHeroStep = () => {
+      frame = 0;
+      const hero = heroRef.current;
+      if (!hero) return;
+
+      const rect = hero.getBoundingClientRect();
+      const travel = Math.max(1, rect.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -rect.top / travel));
+      setHeroStep(progress < 0.34 ? 0 : progress < 0.68 ? 1 : 2);
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateHeroStep);
+    };
+
+    updateHeroStep();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   function handleHeroMove(event: React.MouseEvent<HTMLElement>) {
@@ -77,25 +110,54 @@ export default function Home() {
       <section
         className="hero"
         id="top"
+        ref={heroRef}
+        data-hero-step={heroStep}
         onMouseMove={handleHeroMove}
         onMouseLeave={() => setHeroTilt({ x: 0, y: 0 })}
         style={{ "--tilt-x": heroTilt.x, "--tilt-y": heroTilt.y } as React.CSSProperties}
       >
-        <div className="stack-card stack-pink" />
-        <div className="stack-card stack-blue" />
-        <article className="product-card">
-          <div className="can-wrap">
-            <img className="hero-can" src="/redbull.webp" alt="A full chilled can of Red Bull Energy Drink" />
+        <div className="hero-stage">
+          <article className="hero-product-card card-pink">
+            <div className="can-wrap pink-wrap">
+              <img className="hero-can" src="/pink.webp" alt="A can of Red Bull Pink Edition" />
+            </div>
+            <div className="product-copy">
+              <p className="eyebrow">Red Bull Energy Drink Editions</p>
+              <h2>The Pink<br />Edition</h2>
+              <p className="intro">Wiiings for every taste, sliding forward as the hero card stack changes.</p>
+              <a className="cta" href="#editions">See product</a>
+            </div>
+          </article>
+          <article className="hero-product-card card-blue">
+            <div className="can-wrap blue-wrap">
+              <img className="hero-can" src="/sugarfree.webp" alt="A can of Red Bull Sugarfree" />
+            </div>
+            <div className="product-copy">
+              <p className="eyebrow">Red Bull Energy Drinks</p>
+              <h2>Red Bull<br />Sugarfree</h2>
+              <p className="intro">Wiiings without sugar, revealed from behind the original card.</p>
+              <a className="cta" href="#drinks">See product</a>
+            </div>
+          </article>
+          <article className="hero-product-card product-card card-white">
+            <div className="can-wrap">
+              <img className="hero-can" src="/redbull.webp" alt="A full chilled can of Red Bull Energy Drink" />
+            </div>
+            <div className="product-copy" data-reveal>
+              <p className="eyebrow reveal-child">Red Bull Energy Drinks</p>
+              <h1 className="reveal-child">The Original<br />Red Bull</h1>
+              <p className="intro reveal-child">Red Bull is appreciated worldwide by top athletes, busy professionals, university students and travellers on long journeys.</p>
+              <span className="veg reveal-child" aria-label="Vegetarian product"><i /></span>
+              <a className="cta reveal-child" href="#drinks">See product</a>
+            </div>
+          </article>
+          <div className="hero-progress" aria-hidden="true">
+            <span className={heroStep === 0 ? "is-active" : ""} />
+            <span className={heroStep === 1 ? "is-active" : ""} />
+            <span className={heroStep === 2 ? "is-active" : ""} />
           </div>
-          <div className="product-copy" data-reveal>
-            <p className="eyebrow reveal-child">Red Bull Energy Drinks</p>
-            <h1 className="reveal-child">The Original<br />Red Bull</h1>
-            <p className="intro reveal-child">Red Bull is appreciated worldwide by top athletes, busy professionals, university students and travellers on long journeys.</p>
-            <span className="veg reveal-child" aria-label="Vegetarian product"><i /></span>
-            <a className="cta reveal-child" href="#drinks">See product</a>
-          </div>
-        </article>
-        <div className="scroll-cue">Scroll to explore <span>↓</span></div>
+          <div className="scroll-cue">Scroll to explore <span>↓</span></div>
+        </div>
       </section>
 
       <section className="split-feature" id="drinks">
